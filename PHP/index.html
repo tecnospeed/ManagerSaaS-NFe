@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html>
+  <meta charset="UTF-8">
+  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-alpha.6/css/bootstrap.min.css" integrity="sha384-rwoIResjU2yc3z8GV/NPeZWAv56rSmLldC3R/AZzGRnGxQQKnKkoFVhFQhNUwEyJ" crossorigin="anonymous">
+  <link rel="stylesheet" type="text/css" href="css/style.css">
+  <body>
+    <main>
+    <div class="container">
+      <center><h1>Exemplo de <span class="badge badge-primary">envio</span> no Manager SaaS em <span class="badge badge-info">PHP</span></h1>
+       <p>* Os dados da nota que será emitida, estão dentro do arquivo <code>NFe.tx2</code> na raiz dessa demonstração. *</p></center>
+      <hr>
+      <form action="abou:blank">
+        <div class="form-group">
+          <label for="urlsaas">URL do SaaS</label>
+          <input type="text" class="form-control" id="urlsaas" aria-describedby="emailHelp" placeholder="managersaas..." value="managersaashom.tecnospeed.com.br">
+          <small id="emailHelp" class="form-text text-muted">Ex: managersaashom.tecnospeed.com.br</small>
+        </div>
+        <div class="form-group">
+          <label for="grupo">Grupo</label>
+          <input type="text" class="form-control" name="grupo" id="grupo" placeholder="Grupo" value="edoc">
+        </div>
+        <div class="form-group">
+          <label for="cnpj">CNPJ</label>
+          <input type="text" class="form-control" name="cnpj" id="cnpj" placeholder="CNPJ" value="08187168000160">
+        </div>
+        <div class="form-group">
+          <label for="usuario">Usuário</label>
+          <input type="text" class="form-control" id="usuario" placeholder="Usuário" value="admin">
+        </div>
+        <div class="form-group">
+          <label for="senha">Senha</label>
+          <input type="password" class="form-control" id="senha" placeholder="Senha" value="123mudar">
+        </div>
+        <button type="submit" class="btn btn-primary">Enviar</button>
+      </form>
+      <hr>
+      <center><img id="loading" style="visibility: hidden;" src="img/loading.gif" width="10%"></center>
+      <div>
+        <label for="retorno">Retorno</label>
+        <textarea class="form-control" id="retorno" rows="2" style="resize: none;" value="<?php echo $retorno ?>" name="retorno"></textarea>
+      </div>
+      <br>
+      <center><div class="container">
+        <h3>O que temos nesse formato de retorno?</h3>
+        <h6>"<code>Numero lote ou palavra Exception</code>", "<code>Chave da nota ou classe Exception</code>", "<code>cStat ou mensagem Exception</code>", "<code>mensagem da Sefaz.</code>"</h6>
+        <p>Para os próximos passos vamos precisar apenas da chave de 44 dígitos, então salve ela em um notepad ou deixe no seu CTRL + C :)</p>
+      </div>
+      <a href="consulta.html"><span class="badge badge-pill badge-info">Consulta</span></a>
+      <a href="imprime.html"><span class="badge badge-pill badge-warning">Imprime</span></a>
+      <a href="cancela.html"><span class="badge badge-pill badge-danger">Cancela</span></a>
+      </center>
+    </div>
+    </main>
+    <footer>
+      Docs. Copyright &copy; Tecnospeed 2017
+    </footer>
+  </body>
+  <script
+  src="https://code.jquery.com/jquery-3.1.1.min.js"
+  integrity="sha256-hVVnYaiADRTO2PzUGmuLJr8BLUSjGIZsDYGmIJLv2b8="
+  crossorigin="anonymous"></script>
+  <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-alpha.6/js/bootstrap.min.js" integrity="sha384-vBWWzlZJ8ea9aCX4pEW3rVHjgjt7zpkNpZk+02D9phzyeVkE+jo0ieGizqPLForn" crossorigin="anonymous"></script>
+  <script type="text/javascript">
+  $("form").submit(function(){
+    document.getElementById("loading").style.visibility = "visible"
+    var urlsaas = document.getElementById('urlsaas').value
+    var grupo = document.getElementById('grupo').value
+    var cnpj = document.getElementById('cnpj').value
+    var usuario = document.getElementById('usuario').value
+    var senha = document.getElementById('senha').value
+    var data = 'host=' + urlsaas + '&grupo=' + grupo + '&CNPJ=' + cnpj + '&usuario=' + usuario + '&senha=' + senha
+    $.ajax({
+      url: 'src/envia.php',
+      type: 'post',
+      data: data,
+      success: function(retorno) {
+        document.getElementById("loading").style.visibility = "hidden"
+        document.getElementById('retorno').value = retorno
+      }
+    })
+  });
+  </script>
+</html>

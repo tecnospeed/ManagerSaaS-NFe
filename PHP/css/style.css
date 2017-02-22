@@ -1,0 +1,104 @@
+@import 'https://fonts.googleapis.com/css?family=Roboto:300,400,500';
+
+body {
+  font-family: "Roboto", "Helvetica", "Arial", sans-serif;
+  line-height: 1.5;
+  background: white;
+  color: #566b78;
+  font-size: 16px;
+  line-height: 1.5;
+}
+
+main
+{
+    min-height: 500px;
+    padding: 50px 0;
+}
+
+footer
+{
+    font-size: 14px;
+
+    padding: 30px 0;
+
+    text-align: center;
+
+    color: #bbb;
+    background: rgb(46, 17, 45);
+}
+
+h2{
+  margin-top: 1em;
+  padding-top: 1em;
+}
+
+h1,
+h2,
+strong {
+  color: #333;
+}
+
+code,
+pre {
+  background: #f5f7f9;
+  border-bottom: 1px solid #d8dee9;
+  color: #566b78;
+}
+
+code {
+  padding: 2px 4px;
+  vertical-align: text-bottom;
+  background: #f5f7f9;
+  border-bottom: 1px solid #d8dee9;
+  color: #566b78;
+}
+
+pre {
+  padding: 1em;
+  border-left: 2px solid #69c;
+}
+
+a {
+  color: #e81c4f;
+}
+
+
+.show {
+  display: block !important;
+}
+.hidden {
+  display: none !important;
+  visibility: hidden !important;
+}
+.invisible {
+  visibility: hidden;
+}
+
+.selector{
+	color: #ec5f67;
+}
+
+.number{
+	color: #f99157;
+}
+
+.attribute{
+	color: #5fb3b3;
+}
+
+.value{
+	color: #fac863;
+}
+
+.value2{
+	color:  #c594c5;
+}
+
+.disabled {
+    z-index: 1000;
+    background-color: lightgrey;
+    opacity: 0.6;
+    pointer-events: none;
+    padding-bottom: 2%;
+    padding-left: 3%;
+}

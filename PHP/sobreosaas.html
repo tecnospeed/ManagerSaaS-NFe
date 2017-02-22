@@ -1,0 +1,119 @@
+<!DOCTYPE html>
+<html>
+	<meta charset="UTF-8">
+	<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-alpha.6/css/bootstrap.min.css" integrity="sha384-rwoIResjU2yc3z8GV/NPeZWAv56rSmLldC3R/AZzGRnGxQQKnKkoFVhFQhNUwEyJ" crossorigin="anonymous">
+	<link rel="stylesheet" type="text/css" href="css/style.css">
+	<body>
+		<main>
+		<div class="container">
+			<center><h1>O que é o SaaS?</h1></center>
+			<hr>
+			<p>O SaaS é uma plataforma na nuvem que faz a emissão dos documentos fiscais e serve como um repositório de suas notas, ele seria como uma ponte entre sua aplicação e a Sefaz/Prefeitura</p>
+			<p>Dessa forma, ele é dividido em 2 partes, uma delas é a área da Software House (Sua empresa que tem vínculo com a TecnoSpeed) e a área dos seus clientes (Que são conhecidos como 'Grupos').<br>
+			Para fazer a integração com o SaaS você vai precisar de uma conta (Software House) e de um cliente cadastrado (Grupo) na sua conta de Soft. House.</p>
+			<hr></hr>
+			<h4>Realizando o cadastro da Software House.</h4>
+			<p>O cadastro é bem simples, basta acessar o <a href="https://managersaas.tecnospeed.com.br/#/register" target="new_blank">Link</a> e seguir os passos do registro.</p>
+			<p>Logo depois vamos precisar de um Grupo para podermos começar os testes com o nosso produto, o cadastro dele pode ser feito seguindo este vídeo.</p>
+			<p>Lembre-se de guardar o <code>Nome do Grupo</code>, <code>Usuário</code> e <code>Senha</code> quando estiver criando o Grupo</p>
+			<a href="https://managersaas.tecnospeed.com.br/#/admin" target="new_blank">Acesse a sua conta de Software House</a>
+			<div class="embed-responsive embed-responsive-16by9">
+				<iframe class="embed-responsive-item" src="https://www.youtube.com/v/UcGXLfVqIs4"></iframe>
+			</div>
+			<hr></hr>
+			<h4>O que fizemos aqui?</h4>
+			<p>Criamos a nossa conta de Software House (Guarde o login e senha dela pois você vai precisar cadastrar mais grupos ou fazer manutenção em alguns) e criamos o nosso primeiro Grupo, agora com ele vamos conseguir prosseguir com os testes, no entanto é necessário que você tenha em mãos os seguintes dados <code>Nome do Grupo</code>, <code>Usuário</code> e <code>Senha</code>.</p>
+			<p>Eles são utilizados para fazermos a configuração de suas requisições em <code>PHP</code>, além de usarmos precisarmos deles para acessarmos a <a href="https://managersaas.tecnospeed.com.br:8081/" target="new_blank">Interface Web</a> dos grupos.</p>
+			<hr>
+			<h4>O que vou alterar no código, quando eu for testar o meu grupo?</h4>
+			<p>* É importante lembrar que a URL do <code>SaaS</code> no ambiente real onde você fará as requisições com seus dados, ficará assim : <code>managersaas.tecnospeed.com.br</code>, ou seja sem o <code>hom</code> na URL. *</p>
+			<p>Para as rotas que precisam enviar um <code>POST</code> você fará as seguintes alterações. Ex: Nosso arquivo <code>envia.php</code>.</p>
+			<pre>
+  //Lê conteudo de um txt
+  $tx2 = file_get_contents('NFe.tx2');
+  
+  //Dados do form
+  $post_data['grupo']= $_POST['grupo'];
+  $post_data['cnpj']= $_POST['CNPJ'];
+  $post_data['arquivo']= $tx2;
+
+  $host = $_POST['host'];
+
+  //Gera query em formato URL
+  $data=http_build_query($post_data);
+
+  //Autenticação
+  $usuario = $_POST['usuario'];
+  $senha = $_POST['senha'];
+
+  $auth = base64_encode("$usuario:$senha");
+
+  $socket = fsockopen("ssl://".$host, <span class="selector">7071</span>, $errno, $errstr, 15); <span class="attribute">Altere 7071 para 8081</span>
+
+  $http  = "POST /ManagerAPIWeb/nfe/envia HTTP/1.1\r\n";
+  $http .= "Authorization: Basic ".$auth."\r\n";
+  $http .= "Host: ".$host.":<span class="selector">7071</span>\r\n"; 				  <span class="attribute">Altere 7071 para 8081</span>
+  $http .= "User-Agent: " . $_SERVER['HTTP_USER_AGENT'] . "\r\n";
+  $http .= "Content-Type: application/x-www-form-urlencoded\r\n";
+  $http .= "Content-length: " . strlen($data) . "\r\n";
+  $http .= "Connection: close\r\n\r\n";
+  $http .= $data."\r\n\r\n";
+  fwrite($socket, $http);               
+
+  $result="";
+
+  //Lê todas as linhas do retorno
+  while (!feof($socket))
+  {
+    $result .= fgets($socket, 4096);
+  }
+  fclose($socket);
+
+  //Separa header do conteudo
+  list($header, $body) = preg_split("/\R\R/", $result, 2);
+
+  //Exibe conteudo
+  echo($body);
+			</pre>
+			<br>
+			<p>Para as rotas que precisam enviar um <code>GET</code> você fará as seguintes alterações. Ex: Nosso arquivo <code>consulta.php</code>.</p>
+			<pre>
+  $curl = curl_init();
+  <span class="attribute">Altere 7071 para 8081</span>  
+   $urlconsulta = "https://".$_GET['host'].":<span class="selector">7071</span>/ManagerAPIWeb/nfe/consulta?"."grupo=".$_GET['grupo']."&cnpj=".$_GET['cnpj']."&filtro=".$_GET['filtroconsulta']."&campos=".$_GET['camposconsulta'];
+   
+  //Autenticação
+  $usuario = $_GET['usuario'];
+  $senha = $_GET['senha'];
+
+  $auth = base64_encode("$usuario:$senha");
+
+  curl_setopt_array($curl, array(
+      CURLOPT_RETURNTRANSFER => 1,
+      CURLOPT_SSL_VERIFYPEER => false,
+      CURLOPT_URL => $urlconsulta,
+      CURLOPT_USERAGENT => 'Codular Sample cURL Request'
+    ));
+
+  curl_setopt($curl, CURLOPT_HTTPHEADER, array(
+      'Authorization: Basic '.$auth
+    ));
+
+  $retorno = curl_exec($curl);
+
+  curl_close($curl);
+  echo $retorno;
+			</pre>
+			<hr>
+			<h4>Links importantes</h4>
+			<p>Documentação das <code>rotas</code> do SaaS: <a href="http://tsdn.tecnospeed.com.br/base-de-conhecimento/post/manual-manager-edoc-http-nfe" target="new_blank">Acessar.</a></p>
+			<p>Documentação do arquivo <code>TX2</code>: <a href="http://tsdn.tecnospeed.com.br/base-de-conhecimento/post/componente-tecnospeed-nfe-formas-de-integracao/p/1663" target="new_blank">Acessar.</a></p>
+			<p>Documentação do postman com as <code>rotas</code> do SaaS: <a href="https://documenter.getpostman.com/view/884766/http-nfe/2JuE7x" target="new_blank">Acessar.</a></p>
+			<hr>
+      <center><h3><a href="index.html"><span class="badge badge-pill badge-primary">Inicio</span></a></h3></center>
+		</div>
+		<footer>
+			Docs. Copyright &copy; Tecnospeed 2017
+		</footer>
+	</body>
+</html>

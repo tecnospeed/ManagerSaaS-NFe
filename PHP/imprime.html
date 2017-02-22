@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+<html>
+  <meta charset="UTF-8">
+  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-alpha.6/css/bootstrap.min.css" integrity="sha384-rwoIResjU2yc3z8GV/NPeZWAv56rSmLldC3R/AZzGRnGxQQKnKkoFVhFQhNUwEyJ" crossorigin="anonymous">
+  <link rel="stylesheet" type="text/css" href="css/style.css">
+  <body>
+    <main>
+    <div class="container">
+      <center><h1>Exemplo de <span class="badge badge-warning">impressão</span> no Manager SaaS em <span class="badge badge-info">PHP</span></h1>
+      <p>* Lembrando que a impressão no SaaS é apenas a geração do <code>PDF</code> *</p></center>
+      <hr>
+      <form action="abou:blank">
+        <div class="form-group">
+          <label for="urlsaas">URL do SaaS</label>
+          <input type="text" class="form-control" id="urlsaas" aria-describedby="emailHelp" placeholder="managersaas..." value="managersaashom.tecnospeed.com.br">
+          <small id="emailHelp" class="form-text text-muted">Ex: managersaashom.tecnospeed.com.br</small>
+        </div>
+        <div class="form-group">
+          <label for="grupo">Grupo</label>
+          <input type="text" class="form-control" name="grupo" id="grupo" placeholder="Grupo" value="edoc">
+        </div>
+        <div class="form-group">
+          <label for="cnpj">CNPJ</label>
+          <input type="text" class="form-control" name="cnpj" id="cnpj" placeholder="CNPJ" value="08187168000160">
+        </div>
+        <div class="form-group">
+          <label for="usuario">Usuário</label>
+          <input type="text" class="form-control" id="usuario" placeholder="Usuário" value="admin">
+        </div>
+        <div class="form-group">
+          <label for="senha">Senha</label>
+          <input type="password" class="form-control" id="senha" placeholder="Senha" value="123mudar">
+        </div>
+        <div class="form-group">
+          <label for="chave">Chave da nota</label>
+          <input type="text" class="form-control" id="chave" placeholder="Chave" value="41170208187168000160553210000006521000000019">
+        </div>
+        <button type="submit" class="btn btn-warning">Gerar impressão</button>
+      </form>
+      <hr>
+      <center><img id="loading" style="visibility: hidden;" src="img/loading.gif" width="10%"></center>
+      <div>
+        <label for="retorno">Retorno</label>
+        <textarea class="form-control" id="retorno" rows="2" style="resize: none;" value="<?php echo $retorno ?>" name="retorno"></textarea>
+      </div>
+      <br>
+        <center><button type="submit" onclick="window.location.href=document.getElementById('retorno').value" class="btn btn-success">Deseja baixar esse PDF?</button></center>
+      <br>
+      <center><div class="container">
+        <h3>O que temos nesse formato de retorno?</h3>
+        <h6>A impressão possui um parâmetro chamado URL, se passarmos o valor 1 para ele, teremos como retorno a url do <code>PDF</code> e caso seja 0 teremos como retorno o conteúdo do arquivo <code>PDF</code>.</h6>
+      </div>
+      <a href="index.html"><span class="badge badge-pill badge-primary">Envio</span></a>
+      <a href="consulta.html"><span class="badge badge-pill badge-info">Consulta</span></a>
+      <a href="cancela.html"><span class="badge badge-pill badge-danger">Cancela</span></a>
+      <br>
+      <hr>
+      </center>
+    </div>
+    </main>
+    <footer>
+      Docs. Copyright &copy; Tecnospeed 2017
+    </footer>
+  </body>
+  <script
+  src="https://code.jquery.com/jquery-3.1.1.min.js"
+  integrity="sha256-hVVnYaiADRTO2PzUGmuLJr8BLUSjGIZsDYGmIJLv2b8="
+  crossorigin="anonymous"></script>
+  <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-alpha.6/js/bootstrap.min.js" integrity="sha384-vBWWzlZJ8ea9aCX4pEW3rVHjgjt7zpkNpZk+02D9phzyeVkE+jo0ieGizqPLForn" crossorigin="anonymous"></script>
+  <script type="text/javascript">
+  $("form").submit(function(){
+    document.getElementById("loading").style.visibility = "visible"
+  var urlsaas = document.getElementById('urlsaas').value
+  var grupo = document.getElementById('grupo').value
+  var cnpj = document.getElementById('cnpj').value
+  var usuario = document.getElementById('usuario').value
+  var senha = document.getElementById('senha').value
+  var chave = document.getElementById('chave').value
+  var data = 'host=' + urlsaas + '&grupo=' + grupo + '&cnpj=' + cnpj + '&usuario=' + usuario + '&senha=' + senha + "&chavenota=" + chave
+  $.ajax({
+  url: 'src/imprime.php',
+  type: 'get',
+  data: data,
+  success: function(retorno) {
+        document.getElementById("loading").style.visibility = "hidden"
+  document.getElementById('retorno').value = retorno
+  }
+  })
+  });
+  </script>
+</html>
