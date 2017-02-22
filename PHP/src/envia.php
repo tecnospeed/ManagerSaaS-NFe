@@ -1,24 +1,26 @@
 <?php
-  //Lê conteudo de um txt
+  //Carregamos o conteúdo do arquivo NFe.tx2, pois dentro dele nós temos todos os dados necessários para autorizar uma nota
   $tx2 = file_get_contents('NFe.tx2');
   
-  //Dados do form
+  //Aqui vamos preencher os parâmetros obrigatórios da rota Envia
   $post_data['grupo']= $_POST['grupo'];
   $post_data['cnpj']= $_POST['CNPJ'];
   $post_data['arquivo']= $tx2;
   $post_data['encode']= "true";
 
+  //Passamos para a variável host o endereço do SaaS
   $host = $_POST['host'];
 
-  //Gera query em formato URL
+  //Monta uma query no formato que a requisição POST necessita para enviar informações para um determinado destinatário
   $data=http_build_query($post_data);
 
-  //Autenticação
+  //Para o SaaS autorizar uma comunicação entre seu sistema e nosso servidor, é necessário autenticar essa requisição com o usuario e senha
   $usuario = $_POST['usuario'];
   $senha = $_POST['senha'];
 
   $auth = base64_encode("$usuario:$senha");
 
+  //Aqui iniciamos o processo de montagem da requisição e envio dela
   $socket = fsockopen("ssl://".$host, 7071, $errno, $errstr, 15);
 
   $http  = "POST /ManagerAPIWeb/nfe/envia HTTP/1.1\r\n";
@@ -33,16 +35,16 @@
 
   $result="";
 
-  //Lê todas as linhas do retorno
+  //Lemos todas as linhas do retorno da requisição e atribuímos elas para a variável $result
   while (!feof($socket))
   {
     $result .= fgets($socket, 4096);
   }
   fclose($socket);
 
-  //Separa header do conteudo
+  //Aqui separamos o que é header e o que é o conteúdo que vamos retornar para o front
   list($header, $body) = preg_split("/\R\R/", $result, 2);
 
-  //Exibe conteudo
+  //Devolvemos para o front o conteúdo de resposta do SaaS
   echo($body);
 ?>
